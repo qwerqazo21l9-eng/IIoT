@@ -74,5 +74,5 @@ See [workbench verification](docs/plans/issue-3-tdd.md) for observed red-to-gree
 cycles, state coverage, screenshots and remaining reviewer design QA.
 
 See [domain vocabulary](CONTEXT.md), [architecture decisions](docs/adr/), and
-[implementation order](docs/plans/issue-1-implementation.md) before extending
+[system plan](docs/plans/system-framework.md) before extending
 the simulator or starting another child issue.
