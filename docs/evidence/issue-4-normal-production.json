@@ -1,0 +1,84 @@
+{
+  "issue": 4,
+  "verifiedDate": "2026-10-07",
+  "verification": {
+    "simulatorCases": 14,
+    "serviceIntegrationCases": 6,
+    "actualProtocolCases": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "combinedMavenFinishedAt": "2026-10-07 03:49:12 Asia/Shanghai",
+    "combinedMavenDurationSeconds": 397,
+    "githubCiExecuted": false
+  },
+  "demo": {
+    "run": {
+      "runId": "normal-demo-v1-fcfa62eca11946399976d11842acab02",
+      "status": "COMPLETED",
+      "configuration": {
+        "seed": 42,
+        "runId": "normal-demo-v1-fcfa62eca11946399976d11842acab02",
+        "batches": [
+          {
+            "units": 6,
+            "batchId": "batch-a",
+            "productType": "A"
+          },
+          {
+            "units": 6,
+            "batchId": "batch-b",
+            "productType": "B"
+          }
+        ],
+        "workpieces": 12,
+        "cycleMillis": [
+          100,
+          200,
+          100,
+          100
+        ],
+        "bufferCapacity": 1,
+        "changeoverMillis": 500,
+        "rejectProbability": 0.2
+      },
+      "expectedEvents": 196,
+      "endMillis": 4519,
+      "error": null,
+      "resultVersion": {
+        "input": "simulator-v1",
+        "calculation": "flink-metrics-v1",
+        "mapping": "mapping-v1",
+        "format": "format-v1",
+        "rules": "not-used",
+        "configuration": "055dacd9772a93b9fa8e744df34ffc9a882dd3e8dba0795819287567b28267d3",
+        "statistics": "half-open-v1"
+      }
+    },
+    "metrics": {
+      "lineId": "line-a",
+      "runId": "normal-demo-v1-fcfa62eca11946399976d11842acab02",
+      "batchId": null,
+      "intervalStartMillis": 0,
+      "intervalEndMillis": 4519,
+      "warmupMillis": 0,
+      "goodUnits": 11,
+      "rejectedUnits": 1,
+      "endingWorkInProcess": 0,
+      "goodUnitsPerHour": 8763.000663863686,
+      "dataCompleteness": "COMPLETE",
+      "timeConfidence": "SIMULATED_DEVICE_CLOCK",
+      "scope": "INCLUDING_CHANGEOVER",
+      "resultVersion": {
+        "input": "simulator-v1",
+        "calculation": "flink-metrics-v1",
+        "mapping": "mapping-v1",
+        "format": "format-v1",
+        "rules": "not-used",
+        "configuration": "055dacd9772a93b9fa8e744df34ffc9a882dd3e8dba0795819287567b28267d3",
+        "statistics": "half-open-v1"
+      }
+    },
+    "configurationVersion": "normal-v1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "runId": "normal-demo-v1",
+  "seed": 42,
+  "workpieces": 12,
+  "cycleMillis": [100, 200, 100, 100],
+  "bufferCapacity": 1,
+  "batches": [{"batchId": "batch-a", "productType": "A", "units": 6}, {"batchId": "batch-b", "productType": "B", "units": 6}],
+  "changeoverMillis": 500,
+  "rejectProbability": 0.2
+}

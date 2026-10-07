@@ -1,0 +1,7 @@
+{
+  "lineId": "line-a",
+  "mappingConfigurationVersion": "mapping-v1",
+  "formatVersion": "format-v1",
+  "timeUnit": "milliseconds-since-run-start",
+  "devices": {"1": "line-a:station-1", "2": "line-a:station-2", "3": "line-a:station-3", "4": "line-a:station-4"}
+}

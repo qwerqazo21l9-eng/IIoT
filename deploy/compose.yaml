@@ -1,0 +1,106 @@
+name: iiot-issue4
+services:
+  redis:
+    image: redis:7.0.15-alpine
+    networks:
+      default:
+        aliases: [edgex-redis]
+  consul:
+    image: hashicorp/consul:1.16.6
+    networks:
+      default:
+        aliases: [edgex-core-consul]
+    command: agent -server -bootstrap -client=0.0.0.0
+  bootstrap:
+    image: edgexfoundry/core-common-config-bootstrapper:3.1.1
+    environment:
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      ALL_SERVICES_DATABASE_HOST: redis
+      ALL_SERVICES_MESSAGEBUS_HOST: redis
+      ALL_SERVICES_REGISTRY_HOST: consul
+      APP_SERVICES_CLIENTS_CORE_METADATA_HOST: metadata
+      DEVICE_SERVICES_CLIENTS_CORE_METADATA_HOST: metadata
+    depends_on: [consul, redis]
+  metadata:
+    image: edgexfoundry/core-metadata:3.1.1
+    networks:
+      default:
+        aliases: [edgex-core-metadata]
+    environment:
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      SERVICE_HOST: metadata
+      REGISTRY_HOST: consul
+      DATABASE_HOST: redis
+    depends_on: [bootstrap]
+    ports: ["127.0.0.1:15981:59881"]
+  data:
+    image: edgexfoundry/core-data:3.1.1
+    networks:
+      default:
+        aliases: [edgex-core-data]
+    environment:
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      SERVICE_HOST: data
+      REGISTRY_HOST: consul
+      DATABASE_HOST: redis
+      MESSAGEBUS_HOST: redis
+      CLIENTS_CORE_METADATA_HOST: metadata
+    depends_on: [metadata]
+    ports: ["127.0.0.1:15980:59880"]
+  device-rest:
+    image: edgexfoundry/device-rest:3.1.1
+    environment:
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      SERVICE_HOST: device-rest
+      REGISTRY_HOST: consul
+      MESSAGEBUS_HOST: redis
+      CLIENTS_CORE_DATA_HOST: data
+      CLIENTS_CORE_METADATA_HOST: metadata
+    depends_on: [data]
+  opc-bridge:
+    build: ../ingestion
+    environment:
+      EDGEX_DATA: http://data:59880
+      EDGEX_METADATA: http://metadata:59881
+      EDGEX_DEVICE: http://device-rest:59986
+    depends_on: [device-rest]
+    ports: ["127.0.0.1:14840:4840", "127.0.0.1:18084:8084"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8084/health', timeout=8)"]
+      interval: 5s
+      timeout: 10s
+      retries: 30
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: iiot
+      POSTGRES_PASSWORD: iiot-local
+      POSTGRES_DB: iiot
+    ports: ["127.0.0.1:15432:5432"]
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iiot -d iiot"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  kafka:
+    image: apache/kafka:3.9.0
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:19092,CONTROLLER://:19093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:19092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:19093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    ports: ["127.0.0.1:19092:19092"]
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:19092 --list >/dev/null"]
+      interval: 5s
+      timeout: 10s
+      retries: 30
+volumes:
+  postgres-data:
